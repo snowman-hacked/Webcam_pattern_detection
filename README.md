@@ -8,7 +8,20 @@ sample 코드를 받아와 2가지 기능 추가
 
 ## 트러블슈팅
 - exe파일 배포시 haarcascade 파일이 인식되지 않아 제대로 동작하지 않는 에러
-- haarcascade를 파이썬 설치경로에서 복사하여 같은 디렉터리에 위치 시킨 후
+- 필요한 xml파일들을 opencv 설치경로에서 복사하여 wpd_add2와 동일 디렉터리에 (haarcasacde라는 디렉터리를 생성) 위치 시킨 후에
+```
+def get_haarcascade_path():
+    # PyInstaller 실행 환경에서도 haarcascade 경로를 찾을 수 있도록 설정
+    if hasattr(sys, '_MEIPASS'):  # PyInstaller 실행 시
+        base_path = os.path.join(sys._MEIPASS, "haarcascade")
+    elif os.path.exists(cv2.data.haarcascades):  # 일반 Python 실행 환경
+        base_path = cv2.data.haarcascades
+    else:
+        base_path = os.path.join(os.getcwd(), "haarcascade")  # 실행 파일과 같은 폴더
+
+    return base_path
+```
+- 해당 함수로 경로 찾을 수 있도록 설정 해줬다.
 - pyinstaller --onefile --noconsole --add-data "haarcascade;haarcascade" wpd_add2.py
 - 해당 명령어로 xml파일을 포함시켜 패키징하여 배포 성공
 - 예상되는 폴더 경로
